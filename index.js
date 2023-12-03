@@ -331,6 +331,9 @@ app.get('/cadastraUsuario.html', (requisicao, resposta) => {
     </html>
     `)
 })
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'paginas', 'login.html'));
+});
 
 //endopoint login que irá processar o login da aplicação
 app.post('/login', (requisicao, resposta)=>{
