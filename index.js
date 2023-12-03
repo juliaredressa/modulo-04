@@ -209,7 +209,7 @@ app.use(express.urlencoded({extended: true}));
 //indicando para a aplicação como servir arquivos estaticos localizados na pasta 'paginas'
 app.use(express.static('./paginas'));
 
-app.get(autenticar, '/', (req, res) => {
+app.get('/', autenticar, (req, res) => {
     const dataUltimoAcesso = req.cookies.DataUltimoAcesso;
     const data = new Date();
     res.cookie("DataUltimoAcesso", data.toLocaleString(), {
@@ -331,7 +331,32 @@ app.get('/cadastraUsuario.html', (requisicao, resposta) => {
     </html>
     `)
 })
-app.post(autenticar, '/cadastraUsuario', processaCadastroUsuario)
+
+//endopoint login que irá processar o login da aplicação
+app.post('/login', (requisicao, resposta)=>{
+  const usuario = requisicao.body.usuario;
+  const senha = requisicao.body.senha;
+  if(usuario && senha && (usuario === 'julia') && (senha === '123')){
+    requisicao.session.usuarioAutenticado = true ;
+    resposta.redirect('/');
+  }
+  else{
+    resposta.end(`
+      <!DOCTYPE html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Falha no Login</title>
+        <head>
+        <body>
+          <h2>Usuario ou senha invalido!</h2>
+          <a href="/login.html">Voltar ao Login</a>
+        </body>
+      </html>`);
+  }
+});
+
+//rota
+app.post('/cadastraUsuario', autenticar, processaCadastroUsuario)
 app.listen(porta, host, () => {
     console.log(`Servidor executando na url http://${host}:${porta}`);
 });
